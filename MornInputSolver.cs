@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,6 +10,7 @@ namespace MornInput
     public sealed class MornInputSolver : MonoBehaviour, IMornInput
     {
         [SerializeField] private PlayerInput _playerInput;
+        private readonly Dictionary<string, InputAction> _cachedActionDictionary = new();
         private readonly Subject<(string prev, string next)> _schemeSubject = new();
         private string _cachedControlScheme;
 
@@ -27,5 +29,28 @@ namespace MornInput
         }
 
         public IObservable<(string prev, string next)> OnSchemeChanged => _schemeSubject;
+
+        public bool IsPressStart(string actionName)
+        {
+            return GetAction(actionName).WasPressedThisFrame();
+        }
+
+        public bool IsPressing(string actionName)
+        {
+            return GetAction(actionName).IsPressed();
+        }
+
+        public bool IsPressEnd(string actionName)
+        {
+            return GetAction(actionName).WasReleasedThisFrame();
+        }
+
+        private InputAction GetAction(string actionName)
+        {
+            if (_cachedActionDictionary.TryGetValue(actionName, out var action)) return action;
+            action = _playerInput.actions[actionName];
+            _cachedActionDictionary[actionName] = action;
+            return action;
+        }
     }
 }
