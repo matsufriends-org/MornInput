@@ -28,19 +28,20 @@ namespace MornInput
             _cachedControlScheme = currentControlScheme;
         }
 
-        public IObservable<(string prev, string next)> OnSchemeChanged => _schemeSubject;
+        string IMornInput.CurrentScheme => _playerInput.currentControlScheme;
+        IObservable<(string prev, string next)> IMornInput.OnSchemeChanged => _schemeSubject;
 
-        public bool IsPressStart(string actionName)
+        bool IMornInput.IsPressStart(string actionName)
         {
             return GetAction(actionName).WasPressedThisFrame();
         }
 
-        public bool IsPressing(string actionName)
+        bool IMornInput.IsPressing(string actionName)
         {
             return GetAction(actionName).IsPressed();
         }
 
-        public bool IsPressEnd(string actionName)
+        bool IMornInput.IsPressEnd(string actionName)
         {
             return GetAction(actionName).WasReleasedThisFrame();
         }
