@@ -46,6 +46,11 @@ namespace MornInput
             return GetAction(actionName).WasReleasedThisFrame();
         }
 
+        T IMornInput.ReadValue<T>(string actionName)
+        {
+            return GetAction(actionName).ReadValue<T>();
+        }
+
         private InputAction GetAction(string actionName)
         {
             if (_cachedActionDictionary.TryGetValue(actionName, out var action)) return action;

@@ -9,5 +9,6 @@ namespace MornInput
         bool IsPressStart(string actionName);
         bool IsPressing(string actionName);
         bool IsPressEnd(string actionName);
+        T ReadValue<T>(string actionName) where T : struct;
     }
 }
