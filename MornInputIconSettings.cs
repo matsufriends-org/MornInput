@@ -10,7 +10,7 @@ namespace MornInput
         private class SpriteSet
         {
             public string SchemeKey;
-            public Sprite Sprite;
+            [SpritePreview] public Sprite Sprite;
         }
 
         [SerializeField] private SpriteSet[] _spriteSets;
