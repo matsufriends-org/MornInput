@@ -40,6 +40,11 @@ namespace MornInput
         {
             return GetAction(actionName).IsPressed();
         }
+        
+        bool IMornInput.IsPerformed(string actionName)
+        {
+            return GetAction(actionName).WasPerformedThisFrame();
+        }
 
         bool IMornInput.IsPressEnd(string actionName)
         {
