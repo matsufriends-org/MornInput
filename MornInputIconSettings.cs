@@ -4,7 +4,7 @@ using UnityEngine;
 namespace MornInput
 {
     [CreateAssetMenu(fileName = nameof(MornInputIconSettings), menuName = "Morn/" + nameof(MornInputIconSettings))]
-    public sealed class MornInputIconSettings : ScriptableObject
+    internal sealed class MornInputIconSettings : ScriptableObject
     {
         [Serializable]
         private class SpriteSet
@@ -14,7 +14,6 @@ namespace MornInput
         }
 
         [SerializeField] private SpriteSet[] _spriteSets;
-        public string DefaultSchemeKey;
 
         public Sprite GetSpriteSettings(string schemeKey)
         {

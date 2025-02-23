@@ -2,7 +2,7 @@
 
 namespace MornInput
 {
-    public sealed class SpritePreviewAttribute : PropertyAttribute
+    internal sealed class SpritePreviewAttribute : PropertyAttribute
     {
         public readonly float Size;
 

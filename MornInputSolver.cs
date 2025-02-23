@@ -24,7 +24,7 @@ namespace MornInput
             var currentControlScheme = _playerInput.currentControlScheme;
             if (_cachedControlScheme == currentControlScheme) return;
             _schemeSubject.OnNext((_cachedControlScheme, currentControlScheme));
-            MornInputUtil.Log($"ControlScheme changed: {_cachedControlScheme ?? "None"} -> {currentControlScheme}");
+            MornInputGlobal.Log($"ControlScheme changed: {_cachedControlScheme ?? "None"} -> {currentControlScheme}");
             _cachedControlScheme = currentControlScheme;
         }
 

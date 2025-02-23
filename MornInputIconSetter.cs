@@ -6,7 +6,7 @@ using VContainer;
 namespace MornInput
 {
     [ExecuteAlways]
-    public sealed class MornInputIconSetter : MonoBehaviour
+    internal sealed class MornInputIconSetter : MonoBehaviour
     {
         [SerializeField] private MornInputIconSettings _settings;
         [SerializeField] private Image _image;
@@ -15,9 +15,9 @@ namespace MornInput
 
         private void OnEnable()
         {
-            if (Application.isPlaying && _settings != null)
+            if (Application.isPlaying)
             {
-                Adjust(_settings.DefaultSchemeKey);
+                Adjust(MornInputGlobal.I.DefaultSchemeKey);
             }
 
             if (Application.isPlaying && _mornInput != null)
@@ -35,9 +35,9 @@ namespace MornInput
 
         private void Update()
         {
-            if (!Application.isPlaying && _settings != null)
+            if (!Application.isPlaying)
             {
-                Adjust(_settings.DefaultSchemeKey);
+                Adjust(MornInputGlobal.I.DefaultSchemeKey);
             }
         }
 
@@ -57,15 +57,15 @@ namespace MornInput
             if (_image != null && _image.sprite != sprite)
             {
                 _image.sprite = sprite;
-                MornInputUtil.Log("Image Changed");
-                MornInputUtil.SetDirty(_image);
+                MornInputGlobal.Log("Image Changed");
+                MornInputGlobal.SetDirty(_image);
             }
 
             if (_spriteRenderer != null && _spriteRenderer.sprite != sprite)
             {
                 _spriteRenderer.sprite = sprite;
-                MornInputUtil.Log("SpriteRenderer Changed");
-                MornInputUtil.SetDirty(_spriteRenderer);
+                MornInputGlobal.Log("SpriteRenderer Changed");
+                MornInputGlobal.SetDirty(_spriteRenderer);
             }
         }
     }
