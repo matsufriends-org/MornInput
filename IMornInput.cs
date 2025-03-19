@@ -10,6 +10,10 @@ namespace MornInput
         bool IsPressing(string actionName);
         bool IsPerformed(string actionName);
         bool IsPressEnd(string actionName);
+        bool[] IsPressStartAllControls(string actionName);
+        bool[] IsPressingAllControls(string actionName);
+        bool[] IsPressEndAllControls(string actionName);
+        
         T ReadValue<T>(string actionName) where T : struct;
     }
 }

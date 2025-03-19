@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 namespace MornInput
 {
@@ -50,7 +51,53 @@ namespace MornInput
         {
             return GetAction(actionName).WasReleasedThisFrame();
         }
+        
+        bool[] IMornInput.IsPressStartAllControls(string actionName)
+        {
+            var action = GetAction(actionName);
+            var result = new bool[action.controls.Count];
+            for (var i = 0; i < action.controls.Count; i++)
+            {
+                var control = action.controls[i];
+                if (control is ButtonControl buttonControl)
+                {
+                    result[i] = buttonControl.wasPressedThisFrame;
+                }
+            }
 
+            return result;
+        }
+        bool[] IMornInput.IsPressEndAllControls(string actionName)
+        {
+            var action = GetAction(actionName);
+            var result = new bool[action.controls.Count];
+            for (var i = 0; i < action.controls.Count; i++)
+            {
+                var control = action.controls[i];
+                if (control is ButtonControl buttonControl)
+                {
+                    result[i] = buttonControl.wasReleasedThisFrame;
+                }
+            }
+
+            return result;
+        }
+        
+        bool[] IMornInput.IsPressingAllControls(string actionName)
+        {
+            var action = GetAction(actionName);
+            var result = new bool[action.controls.Count];
+            for (var i = 0; i < action.controls.Count; i++)
+            {
+                var control = action.controls[i];
+                if (control is ButtonControl buttonControl)
+                {
+                    result[i] = buttonControl.isPressed;
+                }
+            }
+
+            return result;
+        }
         T IMornInput.ReadValue<T>(string actionName)
         {
             return GetAction(actionName).ReadValue<T>();
