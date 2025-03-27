@@ -1,5 +1,6 @@
 using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VContainer;
 
@@ -8,10 +9,26 @@ namespace MornInput
     [ExecuteAlways]
     internal sealed class MornInputIconSetter : MonoBehaviour
     {
-        [SerializeField] private MornInputIconSettings _settings;
+        [FormerlySerializedAs("_settings")] public MornInputIconSettings Settings;
         [SerializeField] private Image _image;
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [Inject] private IMornInput _mornInput;
+        
+        public Color IconColor
+        {
+            get => _image != null ? _image.color : _spriteRenderer.color;
+            set
+            {
+                if (_image != null)
+                {
+                    _image.color = value;
+                }
+                else
+                {
+                    _spriteRenderer.color = value;
+                }
+            }
+        }
 
         private void OnEnable()
         {
@@ -43,12 +60,12 @@ namespace MornInput
 
         public void Adjust(string schemeKey)
         {
-            if (_settings == null)
+            if (Settings == null)
             {
                 return;
             }
 
-            var sprite = _settings.GetSpriteSettings(schemeKey);
+            var sprite = Settings.GetSpriteSettings(schemeKey);
             if (sprite == null)
             {
                 return;
