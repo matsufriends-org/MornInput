@@ -8,5 +8,8 @@ namespace MornInput
     {
         public Vector2 NormalOffset;
         public Vector2 PressedOffset;
+
+        public Color NormalColor;
+        public Color PressedColor;
     }
 }

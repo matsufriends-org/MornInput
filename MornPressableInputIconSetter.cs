@@ -13,8 +13,7 @@ namespace MornInput
         public bool isPressed = false;
 
         public Color BackColor;
-        public Color IconColor;
-        
+       
         [Header("normal")]
         [SerializeField] private MornInputIconSettings _normalSettings;
         [SerializeField] private MornInputIconSetter _normalBase;
@@ -76,11 +75,6 @@ namespace MornInput
             {
                 _pressedBase.IconColor = BackColor;
             }
-            
-            if(IconColor != _icon.IconColor)
-            {
-                _icon.IconColor = IconColor;
-            }
         }
         
         public void SwitchPressed(bool isPressed)
@@ -91,6 +85,7 @@ namespace MornInput
             if (_pressedBase != null) _pressedBase.gameObject.SetActive(isPressed);
             
             _icon.transform.localPosition = isPressed ? _iconOffsetSettings.PressedOffset : _iconOffsetSettings.NormalOffset;
+            _icon.IconColor = isPressed ? _iconOffsetSettings.PressedColor : _iconOffsetSettings.NormalColor;
         }
 
         public void Adjust(string schemeKey)
@@ -130,10 +125,12 @@ namespace MornInput
                 MornInputGlobal.Log("IconColor Changed");
                 MornInputGlobal.SetDirty(_pressedBase);
             }
+
+            var color = isPressed ? _iconOffsetSettings.PressedColor : _iconOffsetSettings.NormalColor;
             
-            if (_icon.IconColor != IconColor)
+            if (_icon.IconColor != color)
             {
-                _icon.IconColor = IconColor;
+                _icon.IconColor = color;
                 MornInputGlobal.Log("IconColor Changed");
                 MornInputGlobal.SetDirty(_icon);
             }
