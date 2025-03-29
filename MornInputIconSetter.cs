@@ -9,23 +9,50 @@ namespace MornInput
     [ExecuteAlways]
     internal sealed class MornInputIconSetter : MonoBehaviour
     {
+        private static readonly int _fillAmount = Shader.PropertyToID("_FillAmount");
         [FormerlySerializedAs("_settings")] public MornInputIconSettings Settings;
         [SerializeField] private Image _image;
         [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private SpriteMask _spriteMask;
         [Inject] private IMornInput _mornInput;
-        
         public Color IconColor
         {
-            get => _image != null ? _image.color : _spriteRenderer.color;
+            get => _image != null ? _image.color : _spriteRenderer != null ?_spriteRenderer.color : Color.clear;
             set
             {
                 if (_image != null)
                 {
                     _image.color = value;
                 }
-                else
+                else if (_spriteRenderer != null)
                 {
                     _spriteRenderer.color = value;
+                }
+            }
+        }
+        private MaterialPropertyBlock _propertyBlock;
+
+        private void Awake()
+        {
+            if (_spriteRenderer != null)
+            {
+                _propertyBlock = new MaterialPropertyBlock(); 
+                _spriteRenderer.SetPropertyBlock(_propertyBlock);
+            }
+        }
+
+        public float FillAmount
+        {
+            set
+            {
+                if (_image != null)
+                {
+                    _image.fillAmount = value;
+                }
+                else if (_spriteRenderer != null)
+                {
+                    _propertyBlock.SetFloat(_fillAmount, value);
+                    _spriteRenderer.SetPropertyBlock(_propertyBlock);
                 }
             }
         }
@@ -48,6 +75,7 @@ namespace MornInput
         {
             _image = GetComponent<Image>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
+            _spriteMask = GetComponent<SpriteMask>();
         }
 
         private void Update()
@@ -70,7 +98,7 @@ namespace MornInput
             {
                 return;
             }
-            
+
             if (_image != null && _image.sprite != sprite)
             {
                 _image.sprite = sprite;
@@ -83,6 +111,13 @@ namespace MornInput
                 _spriteRenderer.sprite = sprite;
                 MornInputGlobal.Log("SpriteRenderer Changed");
                 MornInputGlobal.SetDirty(_spriteRenderer);
+            }
+            
+            if (_spriteMask != null && _spriteMask.sprite != sprite)
+            {
+                _spriteMask.sprite = sprite;
+                MornInputGlobal.Log("SpriteMask Changed");
+                MornInputGlobal.SetDirty(_spriteMask);
             }
         }
     }
