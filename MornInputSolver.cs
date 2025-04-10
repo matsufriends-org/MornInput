@@ -23,7 +23,8 @@ namespace MornInput
         private void Update()
         {
             var currentControlScheme = _playerInput.currentControlScheme;
-            if (_cachedControlScheme == currentControlScheme) return;
+            if (_cachedControlScheme == currentControlScheme)
+                return;
             _schemeSubject.OnNext((_cachedControlScheme, currentControlScheme));
             MornInputGlobal.Log($"ControlScheme changed: {_cachedControlScheme ?? "None"} -> {currentControlScheme}");
             _cachedControlScheme = currentControlScheme;
@@ -41,7 +42,7 @@ namespace MornInput
         {
             return GetAction(actionName).IsPressed();
         }
-        
+
         bool IMornInput.IsPerformed(string actionName)
         {
             return GetAction(actionName).WasPerformedThisFrame();
@@ -51,7 +52,22 @@ namespace MornInput
         {
             return GetAction(actionName).WasReleasedThisFrame();
         }
-        
+
+        bool IMornInput.IsPressStartAnyControls(string actionName)
+        {
+            var action = GetAction(actionName);
+            for (var i = 0; i < action.controls.Count; i++)
+            {
+                var control = action.controls[i];
+                if (control is ButtonControl buttonControl && buttonControl.wasPressedThisFrame)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         bool[] IMornInput.IsPressStartAllControls(string actionName)
         {
             var action = GetAction(actionName);
@@ -67,6 +83,7 @@ namespace MornInput
 
             return result;
         }
+
         bool[] IMornInput.IsPressEndAllControls(string actionName)
         {
             var action = GetAction(actionName);
@@ -82,7 +99,7 @@ namespace MornInput
 
             return result;
         }
-        
+
         bool[] IMornInput.IsPressingAllControls(string actionName)
         {
             var action = GetAction(actionName);
@@ -98,6 +115,7 @@ namespace MornInput
 
             return result;
         }
+
         T IMornInput.ReadValue<T>(string actionName)
         {
             return GetAction(actionName).ReadValue<T>();
@@ -105,7 +123,8 @@ namespace MornInput
 
         private InputAction GetAction(string actionName)
         {
-            if (_cachedActionDictionary.TryGetValue(actionName, out var action)) return action;
+            if (_cachedActionDictionary.TryGetValue(actionName, out var action))
+                return action;
             action = _playerInput.actions[actionName];
             _cachedActionDictionary[actionName] = action;
             return action;
