@@ -6,8 +6,9 @@ using System.Linq;
 namespace MornInput
 {
     [ExecuteAlways]
-    internal sealed class MornPressableInputIconSetter : MonoBehaviour
+    public sealed class MornPressableInputIconSetter : MonoBehaviour
     {
+        public bool isGrayscale = false;
         public bool isPressed = false;
         public bool showGauge = false;
         public float gaugeValue;
@@ -28,6 +29,7 @@ namespace MornInput
         [SerializeField] private MornInputIconSettings _iconSettings;
         [SerializeField] private MornInputIconSetter _icon;
         [SerializeField] private MornPressableInputIconSettings _pressableSettings;
+        private bool _beforeIsGrayscale = false;
         private bool _beforeIsPressed = false;
         private bool _beforeShowGauge = false;
         private float _beforeGaugeValue = 0;
@@ -63,17 +65,19 @@ namespace MornInput
             {
                 Adjust(MornInputGlobal.I.DefaultSchemeKey);
             }
-
-            if (_beforeIsPressed != isPressed)
+            
+            if (_beforeIsPressed != isPressed || _beforeIsGrayscale != isGrayscale)
             {
-                _icon.IconColor = isPressed ? _pressableSettings.IconPressedColor : _pressableSettings.IconColor;
-                _topBase.IconColor = isPressed ? _pressableSettings.TopPressedColor : _pressableSettings.TopColor;
+                _icon.IconColor = isGrayscale ? _pressableSettings.IconColor : isPressed ? _pressableSettings.IconPressedColor : _pressableSettings.IconColor;
+                _topBase.IconColor = isGrayscale ? _pressableSettings.GrayTopColor : isPressed ? _pressableSettings.TopPressedColor : _pressableSettings.TopColor;
+                _bottomBase.IconColor = isGrayscale ? _pressableSettings.GrayBottomColor : _pressableSettings.BottomColor;
                 var localPos = isPressed ? _pressableSettings.PressedOffset : _pressableSettings.NormalOffset;
                 _topBase.transform.localPosition = localPos;
                 _gaugeEmptyBase.transform.localPosition = localPos;
                 _gaugeFillBase.transform.localPosition = localPos;
                 _bottomBase.gameObject.SetActive(!isPressed);
                 _beforeIsPressed = isPressed;
+                _beforeIsGrayscale = isGrayscale;
             }
 
             if (_beforeShowGauge != showGauge)
@@ -102,7 +106,7 @@ namespace MornInput
                 MornInputGlobal.Log("Settings Changed");
                 MornInputGlobal.SetDirty(_topBase);
             }
-            
+
             if (_topMaskSettings != null && _topMaskBase.Settings != _topMaskSettings)
             {
                 _topMaskBase.Settings = _topMaskSettings;
