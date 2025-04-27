@@ -6,14 +6,13 @@ namespace MornInput
     {
         string CurrentScheme { get; }
         IObservable<(string prev, string next)> OnSchemeChanged { get; }
-        bool IsPressStart(string actionName);
-        bool IsPressing(string actionName);
+        bool IsPressedAny(string actionName);
+        bool IsPressedAll(string actionName);
         bool IsPerformed(string actionName);
-        bool IsPressEnd(string actionName);
-        bool IsPressStartAnyControls(string actionName);
-        bool[] IsPressStartAllControls(string actionName);
-        bool[] IsPressingAllControls(string actionName);
-        bool[] IsPressEndAllControls(string actionName);
+        bool IsPressingAny(string actionName);
+        bool IsPressingAll(string actionName);
+        bool IsReleaseAny(string actionName);
+        bool IsReleaseAll(string actionName);
         
         T ReadValue<T>(string actionName) where T : struct;
     }

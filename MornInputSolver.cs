@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 
 namespace MornInput
 {
@@ -14,6 +13,8 @@ namespace MornInput
         private readonly Dictionary<string, InputAction> _cachedActionDictionary = new();
         private readonly Subject<(string prev, string next)> _schemeSubject = new();
         private string _cachedControlScheme;
+        string IMornInput.CurrentScheme => _playerInput.currentControlScheme;
+        IObservable<(string prev, string next)> IMornInput.OnSchemeChanged => _schemeSubject;
 
         private void Reset()
         {
@@ -24,23 +25,23 @@ namespace MornInput
         {
             var currentControlScheme = _playerInput.currentControlScheme;
             if (_cachedControlScheme == currentControlScheme)
+            {
                 return;
+            }
+
             _schemeSubject.OnNext((_cachedControlScheme, currentControlScheme));
             MornInputGlobal.Log($"ControlScheme changed: {_cachedControlScheme ?? "None"} -> {currentControlScheme}");
             _cachedControlScheme = currentControlScheme;
         }
 
-        string IMornInput.CurrentScheme => _playerInput.currentControlScheme;
-        IObservable<(string prev, string next)> IMornInput.OnSchemeChanged => _schemeSubject;
-
-        bool IMornInput.IsPressStart(string actionName)
+        bool IMornInput.IsPressedAny(string actionName)
         {
-            return GetAction(actionName).WasPressedThisFrame();
+            return GetAction(actionName).AnyPressed();
         }
 
-        bool IMornInput.IsPressing(string actionName)
+        bool IMornInput.IsPressedAll(string actionName)
         {
-            return GetAction(actionName).IsPressed();
+            return GetAction(actionName).AllPressed();
         }
 
         bool IMornInput.IsPerformed(string actionName)
@@ -48,72 +49,24 @@ namespace MornInput
             return GetAction(actionName).WasPerformedThisFrame();
         }
 
-        bool IMornInput.IsPressEnd(string actionName)
+        bool IMornInput.IsPressingAny(string actionName)
         {
-            return GetAction(actionName).WasReleasedThisFrame();
+            return GetAction(actionName).AnyPressing();
         }
 
-        bool IMornInput.IsPressStartAnyControls(string actionName)
+        bool IMornInput.IsPressingAll(string actionName)
         {
-            var action = GetAction(actionName);
-            for (var i = 0; i < action.controls.Count; i++)
-            {
-                var control = action.controls[i];
-                if (control is ButtonControl buttonControl && buttonControl.wasPressedThisFrame)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return GetAction(actionName).AllPressing();
         }
 
-        bool[] IMornInput.IsPressStartAllControls(string actionName)
+        bool IMornInput.IsReleaseAny(string actionName)
         {
-            var action = GetAction(actionName);
-            var result = new bool[action.controls.Count];
-            for (var i = 0; i < action.controls.Count; i++)
-            {
-                var control = action.controls[i];
-                if (control is ButtonControl buttonControl)
-                {
-                    result[i] = buttonControl.wasPressedThisFrame;
-                }
-            }
-
-            return result;
+            return GetAction(actionName).AnyReleased();
         }
 
-        bool[] IMornInput.IsPressEndAllControls(string actionName)
+        bool IMornInput.IsReleaseAll(string actionName)
         {
-            var action = GetAction(actionName);
-            var result = new bool[action.controls.Count];
-            for (var i = 0; i < action.controls.Count; i++)
-            {
-                var control = action.controls[i];
-                if (control is ButtonControl buttonControl)
-                {
-                    result[i] = buttonControl.wasReleasedThisFrame;
-                }
-            }
-
-            return result;
-        }
-
-        bool[] IMornInput.IsPressingAllControls(string actionName)
-        {
-            var action = GetAction(actionName);
-            var result = new bool[action.controls.Count];
-            for (var i = 0; i < action.controls.Count; i++)
-            {
-                var control = action.controls[i];
-                if (control is ButtonControl buttonControl)
-                {
-                    result[i] = buttonControl.isPressed;
-                }
-            }
-
-            return result;
+            return GetAction(actionName).AllReleased();
         }
 
         T IMornInput.ReadValue<T>(string actionName)
@@ -124,7 +77,10 @@ namespace MornInput
         private InputAction GetAction(string actionName)
         {
             if (_cachedActionDictionary.TryGetValue(actionName, out var action))
+            {
                 return action;
+            }
+
             action = _playerInput.actions[actionName];
             _cachedActionDictionary[actionName] = action;
             return action;
