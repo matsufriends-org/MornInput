@@ -1,6 +1,4 @@
-using UniRx;
 using UnityEngine;
-using VContainer;
 using System.Linq;
 
 namespace MornInput
@@ -33,19 +31,12 @@ namespace MornInput
         private bool _beforeIsPressed = false;
         private bool _beforeShowGauge = false;
         private float _beforeGaugeValue = 0;
-        [Inject] private IMornInput _mornInput;
 
         private void OnEnable()
         {
             if (Application.isPlaying)
             {
-                Adjust(MornInputGlobal.I.DefaultSchemeKey);
-            }
-
-            if (Application.isPlaying && _mornInput != null)
-            {
-                Adjust(_mornInput.CurrentScheme);
-                _mornInput.OnSchemeChanged.Subscribe(x => Adjust(x.next)).AddTo(this);
+                Adjust();
             }
         }
 
@@ -63,7 +54,7 @@ namespace MornInput
         {
             if (!Application.isPlaying)
             {
-                Adjust(MornInputGlobal.I.DefaultSchemeKey);
+                Adjust();
             }
             
             if (_beforeIsPressed != isPressed || _beforeIsGrayscale != isGrayscale)
@@ -98,7 +89,7 @@ namespace MornInput
             }
         }
 
-        public void Adjust(string schemeKey)
+        private void Adjust()
         {
             if (_topSettings != null && _topBase.Settings != _topSettings)
             {
