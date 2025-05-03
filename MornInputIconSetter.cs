@@ -35,20 +35,6 @@ namespace MornInput
         private Material _cachedMaterial;
         private MaterialPropertyBlock _propertyBlock;
 
-        private void Awake()
-        {
-            if (Application.isPlaying)
-            {
-                if (_spriteRenderer != null)
-                {
-                    _cachedMaterial = new Material(_spriteRenderer.material);
-                    _spriteRenderer.material = _cachedMaterial;
-                    _propertyBlock = new MaterialPropertyBlock();
-                    _spriteRenderer.SetPropertyBlock(_propertyBlock);
-                }
-            }
-        }
-
         private void OnDestroy()
         {
             if (_cachedMaterial != null)
@@ -77,7 +63,14 @@ namespace MornInput
         {
             if (Application.isPlaying)
             {
-                MornInputGlobal.Log("Force " + _mornInput.CurrentScheme + " " + gameObject.name);
+                if (_spriteRenderer != null)
+                {
+                    _cachedMaterial = new Material(_spriteRenderer.material);
+                    _spriteRenderer.material = _cachedMaterial;
+                    _propertyBlock = new MaterialPropertyBlock();
+                    _spriteRenderer.SetPropertyBlock(_propertyBlock);
+                }
+
                 Adjust(_mornInput.CurrentScheme, true);
                 _mornInput.OnSchemeChanged.Subscribe(x => Adjust(x.next, false)).AddTo(this);
             }
@@ -114,7 +107,6 @@ namespace MornInput
             if (_image != null && (force || _image.sprite != sprite))
             {
                 _image.sprite = sprite;
-                MornInputGlobal.Log("Image Changed " + gameObject.name + " " + sprite.name);
                 MornInputGlobal.SetDirty(_image);
             }
 
@@ -122,14 +114,12 @@ namespace MornInput
             {
                 _spriteRenderer.sprite = sprite;
                 _propertyBlock.SetTexture(_mainTex, sprite.texture);
-                MornInputGlobal.Log("SpriteRenderer Changed " + gameObject.name + " " + sprite.name);
                 MornInputGlobal.SetDirty(_spriteRenderer);
             }
 
             if (_spriteMask != null && (force || _spriteMask.sprite != sprite))
             {
                 _spriteMask.sprite = sprite;
-                MornInputGlobal.Log("SpriteMask Changed " + gameObject.name + " " + sprite.name);
                 MornInputGlobal.SetDirty(_spriteMask);
             }
         }
