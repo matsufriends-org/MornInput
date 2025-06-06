@@ -27,7 +27,7 @@ namespace MornInput
         
         internal static void SetDirty(Object obj)
         {
-            I.SetDirtyInternal();
+            I.SetDirtyInternal(obj);
         }
     }
 }
